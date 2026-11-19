@@ -1,0 +1,146 @@
+<template>
+	<lightning-card title={title}>
+		<div slot="actions">
+			<template lwc:if={showValuesButton}>
+				<button class="expand-btn" onclick={toggleLabels} title={labelsToggleTitle}>
+					<template lwc:if={labelsVisible}>
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							viewBox="0 0 24 24"
+							width="16"
+							height="16"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="2"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+						>
+							<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+							<circle cx="12" cy="12" r="3" />
+						</svg>
+					</template>
+					<template lwc:else>
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							viewBox="0 0 24 24"
+							width="16"
+							height="16"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="2"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+						>
+							<path
+								d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"
+							/>
+							<line x1="1" y1="1" x2="23" y2="23" />
+						</svg>
+					</template>
+				</button>
+			</template>
+			<template lwc:if={showExpandButton}>
+				<button class="expand-btn" onclick={openModal} title={expandTitleLabel}>
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						viewBox="0 0 24 24"
+						width="16"
+						height="16"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+					>
+						<path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
+					</svg>
+				</button>
+			</template>
+		</div>
+		<div class={chartBodyClass}>
+			<template if:true={isLoading}>
+				<div class="spinner-dashboard">
+					<lightning-spinner alternative-text="Loading" variant="brand" size="large"></lightning-spinner>
+				</div>
+			</template>
+			<div class={containerClass}>
+				<template lwc:if={isEmpty}><div class="centerText">{nodata}</div></template>
+				<canvas></canvas>
+			</div>
+			<template lwc:if={hasLegendItems}>
+				<div class={legendContainerClass}>
+					<template lwc:if={legendTitle}><p class="legend-title slds-m-horizontal--small">{legendTitle}</p></template>
+					<div class="custom-legend slds-m-horizontal--small">
+						<template for:each={legendItems} for:item="item">
+							<button key={item.index} class="legend-item" data-index={item.index} onclick={handleLegendClick}>
+								<span class="legend-dot" style={item.colorStyle}></span>
+								<span class={item.labelClass} style={item.labelStyle}>{item.label}</span>
+								<template lwc:if={item.value}>
+									<span class="legend-stats">{item.value} · {item.percentage}</span>
+								</template>
+							</button>
+						</template>
+					</div>
+				</div>
+			</template>
+		</div>
+	</lightning-card>
+
+	<template lwc:if={isModalOpen}>
+		<div class="modal-backdrop">
+			<div class="modal-dialog">
+				<div class="modal-header">
+					<span class="modal-title">{title}</span>
+					<div class="modal-header-actions">
+						<template lwc:if={showValuesButton}>
+							<button class="expand-btn modal-toggle-btn" onclick={toggleLabels} title={labelsToggleTitle}>
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									viewBox="0 0 24 24"
+									width="16"
+									height="16"
+									fill="none"
+									stroke="currentColor"
+									stroke-width="2"
+									stroke-linecap="round"
+									stroke-linejoin="round"
+								>
+									<template lwc:if={labelsVisible}>
+										<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+										<circle cx="12" cy="12" r="3" />
+									</template>
+									<template lwc:else>
+										<path
+											d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"
+										/>
+										<line x1="1" y1="1" x2="23" y2="23" />
+									</template>
+								</svg>
+							</button>
+						</template>
+						<button class="modal-close-btn" onclick={closeModal}>&#x2715;</button>
+					</div>
+				</div>
+				<div class={modalBodyClass}>
+					<div class="modal-container"><canvas class="modal-canvas"></canvas></div>
+					<template lwc:if={hasLegendItems}>
+						<div class={legendContainerClass}>
+							<template lwc:if={legendTitle}><p class="legend-title slds-m-horizontal--small">{legendTitle}</p></template>
+							<div class="custom-legend modal-legend slds-m-horizontal--small">
+								<template for:each={legendItems} for:item="item">
+									<button key={item.index} class="legend-item" data-index={item.index} onclick={handleLegendClick}>
+										<span class="legend-dot" style={item.colorStyle}></span>
+										<span class={item.labelClass} style={item.labelStyle}>{item.label}</span>
+										<template lwc:if={item.value}>
+											<span class="legend-stats">{item.value} · {item.percentage}</span>
+										</template>
+									</button>
+								</template>
+							</div>
+						</div>
+					</template>
+				</div>
+			</div>
+		</div>
+	</template>
+</template>

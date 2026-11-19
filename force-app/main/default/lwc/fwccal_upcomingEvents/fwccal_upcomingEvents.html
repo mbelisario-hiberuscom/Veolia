@@ -1,0 +1,20 @@
+<template>
+	<template if:true={items}>
+		<template for:each={items} for:item="item">
+			<div key={item.id} class="box slds-m-bottom_medium">
+				<c-fwccal_event-details
+					controller-class={controllerClass}
+					event={item}
+					truncate={truncate}
+					truncate-each-line={truncateEachLine}
+					truncate-number-of-lines-to-display={truncateNumberOfLinesToDisplay}
+					no-header-border="true"
+					event-detail-button-text={eventDetailButtonText}
+					buttons-on-bottom={buttonsOnBottom}
+					hide-event-detail-button={hideEventDetailButton}
+				>
+				</c-fwccal_event-details>
+			</div>
+		</template>
+	</template>
+</template>

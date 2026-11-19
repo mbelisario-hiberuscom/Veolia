@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+	<apiVersion>65.0</apiVersion>
+	<isExposed>true</isExposed>
+	<masterLabel>Generic Related List</masterLabel>
+	<description>Reusable related list that loads accessible child records into the generic paginated datatable.</description>
+	<targets>
+		<target>lightning__RecordPage</target>
+		<target>lightning__FlowScreen</target>
+	</targets>
+	<targetConfigs>
+		<targetConfig targets="lightning__RecordPage">
+			<property name="recordId" type="String" label="Parent record Id" />
+			<property name="showHeader" type="Boolean" label="Show header" default="true" />
+			<property name="title" type="String" label="Title" />
+			<property name="iconName" type="String" label="Icon name" default="standard:record" />
+			<property name="pageSize" type="Integer" label="Rows per page (10, 20, 50 or 100)" default="20" />
+			<property name="relatedObjectApiName" type="String" label="Related object API name" required="true" />
+			<property name="relationshipFieldApiName" type="String" label="Relationship field API name" />
+			<property name="fieldSet" type="String" label="Field set API name" required="true" />
+			<property name="whereClause" type="String" label="WHERE clause" />
+			<property name="orderBy" type="String" label="ORDER BY clause" />
+			<property name="limitSize" type="Integer" label="Query limit" default="200" />
+			<property name="showNewButton" type="Boolean" label="Show new record button" default="false" />
+			<property name="showExportButton" type="Boolean" label="Show export button" default="true" />
+			<property name="showEditButton" type="Boolean" label="Show edit action" default="false" />
+			<property name="showDeleteButton" type="Boolean" label="Show delete action" default="false" />
+		</targetConfig>
+		<targetConfig targets="lightning__FlowScreen">
+			<property
+				name="recordId"
+				type="String"
+				label="Parent record Id"
+				description="Map this property to the Flow variable recordId."
+				role="inputOnly"
+			/>
+			<property name="showHeader" type="Boolean" label="Show header" default="true" />
+			<property name="title" type="String" label="Title" />
+			<property name="iconName" type="String" label="Icon name" default="standard:record" />
+			<property name="pageSize" type="Integer" label="Rows per page (10, 20, 50 or 100)" default="20" />
+			<property name="relatedObjectApiName" type="String" label="Related object API name" required="true" />
+			<property name="fieldSet" type="String" label="Field set API name" required="true" />
+			<property name="whereClause" type="String" label="WHERE clause" />
+			<property name="orderBy" type="String" label="ORDER BY clause" />
+			<property name="limitSize" type="Integer" label="Query limit" default="200" />
+			<property name="showNewButton" type="Boolean" label="Show new record button" default="false" />
+			<property name="showExportButton" type="Boolean" label="Show export button" default="true" />
+			<property name="showEditButton" type="Boolean" label="Show edit action" default="false" />
+			<property name="showDeleteButton" type="Boolean" label="Show delete action" default="false" />
+		</targetConfig>
+	</targetConfigs>
+</LightningComponentBundle>

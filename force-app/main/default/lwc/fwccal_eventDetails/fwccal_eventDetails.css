@@ -1,0 +1,64 @@
+.cccalendar_slds-modal__container {
+	width: 75%;
+	max-width: 75rem;
+}
+
+.eventHeader {
+	text-align: left;
+}
+
+.noHeaderBorder {
+	border: none;
+}
+
+.titleDiv {
+	display: inline-flex;
+}
+
+.titleH2Container {
+	max-width: 95%;
+}
+
+.cccalendar_eventButtonSpan {
+	min-width: 60px;
+	max-width: 190px;
+}
+
+.cccalendar_modal__content {
+	box-shadow: none;
+	max-height: calc(100vh - 350px);
+}
+
+.truncateEntireContentBlock {
+	--cccalendar-line-clamp: 3;
+	-webkit-line-clamp: var(--cccalendar-line-clamp, 3);
+	-webkit-box-orient: vertical;
+	display: -webkit-box;
+	white-space: normal;
+	overflow: hidden;
+}
+
+.noTruncate {
+	overflow-wrap: anywhere;
+}
+
+.linkWrapperDiv {
+	display: inline-block;
+}
+
+@media only screen and (max-device-width: 768px) {
+	.cccalendar_eventButtonSpan {
+		max-width: 120px;
+	}
+}
+
+@media only screen and (max-device-width: 480px) {
+	.cccalendar_slds-modal__container {
+		margin-left: auto;
+		margin-right: auto;
+	}
+
+	.cccalendar_eventButtonSpan {
+		max-width: 150px;
+	}
+}

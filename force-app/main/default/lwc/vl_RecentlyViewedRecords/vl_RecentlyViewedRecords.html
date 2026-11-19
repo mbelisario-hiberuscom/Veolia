@@ -1,0 +1,116 @@
+<template>
+	<div class={carouselClass} aria-label="Recently viewed records">
+		<template lwc:if={isLoading}>
+			<lightning-spinner alternative-text="Loading" variant="brand"></lightning-spinner>
+		</template>
+		<template lwc:elseif={hasRecords}>
+			<div class={carouselContentClass}>
+				<template lwc:if={hasPagination}>
+					<lightning-button-icon
+						icon-name="utility:chevronleft"
+						alternative-text={previousLabel}
+						title={previousLabel}
+						disabled={previousDisabled}
+						onclick={previousPage}
+					></lightning-button-icon>
+				</template>
+				<div class="cards" role="list">
+					<template for:each={visibleRecords} for:item="record">
+						<article
+							key={record.recordId}
+							class="record-card"
+							role="listitem"
+							tabindex="0"
+							data-record-id={record.recordId}
+							data-object-api-name={record.objectApiName}
+							onclick={navigateToRecord}
+							onkeydown={handleCardKeydown}
+						>
+							<div class="record-card-title">
+								<div class="record-card-title-content">
+									<lightning-icon icon-name={record.icon} alternative-text="" size="medium"></lightning-icon>
+									<a
+										href={record.recordUrl}
+										data-record-id={record.recordId}
+										data-object-api-name={record.objectApiName}
+										onclick={navigateToRecord}
+										>{record.recordName}</a
+									>
+								</div>
+								<div class="record-card-actions">
+									<template for:each={record.actions} for:item="action">
+										<lightning-button-icon
+											key={action.name}
+											icon-name={action.iconName}
+											alternative-text={action.label}
+											title={action.label}
+											data-action-name={action.name}
+											data-record-id={record.recordId}
+											onclick={handleCardAction}
+										></lightning-button-icon>
+									</template>
+								</div>
+							</div>
+							<div class="record-card-body">
+								<template lwc:if={record.isRecordLoading}>
+									<lightning-spinner alternative-text="Loading" variant="brand" size="small"></lightning-spinner>
+								</template>
+								<lightning-record-view-form
+									record-id={record.recordId}
+									object-api-name={record.objectApiName}
+									data-record-id={record.recordId}
+									onload={handleRecordLoad}
+								>
+									<template for:each={record.fields} for:item="field">
+										<div key={field.key}>
+											<lightning-output-field field-name={field.apiName} variant="label-inline"></lightning-output-field>
+										</div>
+									</template>
+								</lightning-record-view-form>
+							</div>
+						</article>
+					</template>
+				</div>
+				<template lwc:if={hasPagination}>
+					<lightning-button-icon
+						icon-name="utility:chevronright"
+						alternative-text={nextLabel}
+						title={nextLabel}
+						disabled={nextDisabled}
+						onclick={nextPage}
+					></lightning-button-icon>
+				</template>
+			</div>
+		</template>
+		<template lwc:elseif={errorMessage}>
+			<p class="message slds-text-color_error">{errorMessage}</p>
+		</template>
+		<template lwc:else>
+			<p class="message">No recently viewed records</p>
+		</template>
+	</div>
+	<template lwc:if={isFlowOpen}>
+		<section role="dialog" tabindex="-1" aria-modal="true" aria-label={activeFlowName} class="flow-modal slds-modal slds-fade-in-open">
+			<div class="slds-modal__container">
+				<header class="slds-modal__header">
+					<lightning-button-icon
+						class="flow-modal-close"
+						icon-name="utility:close"
+						alternative-text="Cerrar"
+						title="Cerrar"
+						onclick={closeFlow}
+					></lightning-button-icon>
+					<h2 class="slds-modal__title slds-hyphenate">{activeFlowName}</h2>
+				</header>
+				<div class="slds-modal__content slds-p-around_medium">
+					<lightning-flow
+						flow-api-name={activeFlowName}
+						flow-input-variables={activeFlowInputVariables}
+						onstatuschange={handleFlowStatusChange}
+					></lightning-flow>
+				</div>
+			</div>
+		</section>
+		<div class="slds-backdrop slds-backdrop_open"></div>
+	</template>
+</template>

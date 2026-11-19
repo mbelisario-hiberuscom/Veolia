@@ -1,0 +1,26 @@
+<template>
+	<section class="related-list" aria-label={listTitle}>
+		<c-vl_-generic-paginated-datatable
+			data={records}
+			columns={columns}
+			page-size={pageSize}
+			results-label={resultsLabel}
+			header-title={listTitle}
+			header-icon-name={iconName}
+			show-header={showHeader}
+			show-new-button={shouldShowNewButton}
+			show-export-button={showExportButton}
+			show-edit-button={shouldShowEditButton}
+			show-delete-button={shouldShowDeleteButton}
+			object-api-name={relatedObjectApiName}
+			record-id={recordId}
+			relationship-field-api-name={relationshipFieldApiName}
+			is-loading={isLoading}
+			is-loading-list-views={isLoading}
+			has-selected-list-view
+			onrecordedit={handleRecordEdit}
+			onrecorddelete={handleRecordDelete}
+			empty-state-data-label={nodata}
+		></c-vl_-generic-paginated-datatable>
+	</section>
+</template>

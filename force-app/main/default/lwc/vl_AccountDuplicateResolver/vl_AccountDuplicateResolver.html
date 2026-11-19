@@ -1,0 +1,28 @@
+<template>
+	<lightning-card title="Resolver duplicados" icon-name="standard:account">
+		<div class="slds-var-p-around_medium">
+			<div class="slds-grid slds-wrap slds-gutters">
+				<div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2">
+					<lightning-input label="Nombre de Account" value={accountName} onchange={handleNameChange}></lightning-input>
+				</div>
+				<div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2">
+					<lightning-input label="CIF" value={fiscalNumber} onchange={handleFiscalNumberChange}></lightning-input>
+				</div>
+			</div>
+			<div class="slds-var-m-top_medium">
+				<lightning-button variant="brand" label="Buscar duplicados" onclick={handleSearch} disabled={isLoading}></lightning-button>
+			</div>
+			<template lwc:if={isLoading}>
+				<lightning-spinner alternative-text="Buscando duplicados"></lightning-spinner>
+			</template>
+			<template lwc:if={hasMatches}>
+				<div class="slds-var-m-top_medium">
+					<lightning-datatable key-field="accountId" data={matches} columns={columns} hide-checkbox-column></lightning-datatable>
+				</div>
+			</template>
+			<template lwc:if={showEmptyState}>
+				<p class="slds-var-m-top_medium">No se han encontrado Accounts coincidentes.</p>
+			</template>
+		</div>
+	</lightning-card>
+</template>

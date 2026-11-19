@@ -1,0 +1,10 @@
+<template>
+	<div class="rating-cell" title={tooltip}>
+		<div class="rating-dots" role="img" aria-label={ariaLabel}>
+			<template for:each={dots} for:item="dot">
+				<span key={dot.index} class={dot.className}></span>
+			</template>
+		</div>
+		<!--<span class="rating-value">{displayValue}</span>-->
+	</div>
+</template>

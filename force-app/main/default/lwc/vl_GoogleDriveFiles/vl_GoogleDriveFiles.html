@@ -1,0 +1,148 @@
+<template>
+	<lightning-card>
+		<span slot="title" class="card-title">
+			<img src={googleDriveIconUrl} alt="" class="card-icon" />
+			<span>{label.title}</span>
+		</span>
+		<div slot="actions" class="card-actions">
+			<lightning-button-icon
+				class="slds-m-top--x-small"
+				icon-name="utility:refresh"
+				variant="border-filled"
+				alternative-text={label.refresh}
+				title={label.refresh}
+				onclick={handleRefresh}
+			></lightning-button-icon>
+		</div>
+
+		<div class="slds-var-p-horizontal_small">
+			<template lwc:if={folderResolved}>
+				<div class="breadcrumb-row">
+					<lightning-icon icon-name="utility:open_folder" alternative-text="" size="x-small" class="breadcrumb-icon"></lightning-icon>
+					<nav class="slds-var-m-bottom_x-small" aria-label="Breadcrumbs">
+						<ol class="breadcrumbs">
+							<template for:each={breadcrumbs} for:item="crumb" for:index="index">
+								<li key={crumb.id} class="breadcrumb-item">
+									<button
+										type="button"
+										class="slds-button slds-button_reset breadcrumb-link"
+										data-index={index}
+										onclick={handleBreadcrumbClick}
+										title={crumb.name}
+									>
+										{crumb.name}
+									</button>
+								</li>
+							</template>
+						</ol>
+					</nav>
+				</div>
+
+				<template lwc:if={showUploadControl}>
+					<div class="upload-control">
+						<div class="upload-row">
+							<lightning-file-upload
+								name="googleDriveFileUpload"
+								record-id={recordId}
+								file-field-name="VL_GoogleDriveFolder_fileupload__c"
+								file-field-value={currentFolderId}
+								multiple={allowMultiple}
+								onuploadfinished={handleUploadFinished}
+								class="upload-input"
+							></lightning-file-upload>
+							<template lwc:if={hasUploadLimit}>
+								<div class="upload-limit" title={uploadLimitLabel}>
+									<lightning-icon
+										icon-name="utility:info"
+										alternative-text={uploadLimitLabel}
+										size="x-small"
+										class="upload-limit-icon"
+									></lightning-icon>
+									<span class="upload-limit-text">{uploadLimitLabel}</span>
+								</div>
+							</template>
+						</div>
+					</div>
+				</template>
+			</template>
+
+			<template lwc:if={isLoading}>
+				<div class="slds-is-relative slds-p-around--xx-large">
+					<lightning-spinner alternative-text="Loading" variant="brand" size="large"></lightning-spinner>
+				</div>
+			</template>
+
+			<template lwc:elseif={hasError}>
+				<div class="slds-var-p-around_medium">
+					<p class="slds-text-color_error">{label.error}</p>
+				</div>
+			</template>
+			<template lwc:elseif={hasItems}>
+				<ul class="tile-grid">
+					<template for:each={items} for:item="item">
+						<li key={item.id} class="tile-cell">
+							<button
+								type="button"
+								class="tile"
+								data-id={item.id}
+								data-name={item.name}
+								data-folder={item.isFolder}
+								data-read-only={item.isReadOnly}
+								data-link={item.webViewLink}
+								onclick={handleTileClick}
+								title={item.name}
+							>
+								<template lwc:if={item.isUnprocessed}>
+									<span class={item.syncStatusClass} title={item.syncTooltip}>
+										<lightning-icon
+											icon-name={item.syncIconName}
+											variant={item.syncVariant}
+											alternative-text={item.syncTooltip}
+											title={item.syncTooltip}
+											size="x-small"
+										></lightning-icon>
+									</span>
+								</template>
+								<lightning-icon icon-name={item.iconName} size="large" class="tile-icon"></lightning-icon>
+								<span class="tile-name">{item.name}</span>
+								<span class="tile-meta">{item.metaLabel}</span>
+								<template lwc:if={item.modifiedTime}>
+									<span class="tile-meta">
+										<lightning-formatted-date-time
+											value={item.modifiedTime}
+											year="numeric"
+											month="2-digit"
+											day="2-digit"
+										></lightning-formatted-date-time>
+									</span>
+								</template>
+							</button>
+						</li>
+					</template>
+				</ul>
+			</template>
+			<template lwc:elseif={isEmptyFolder}>
+				<div class="slds-var-p-around_medium">
+					<p>{label.emptyFolder}</p>
+				</div>
+			</template>
+			<template lwc:elseif={showNoFolder}>
+				<div class="no-folder-state slds-var-p-around_medium">
+					<p>{label.noFolder}</p>
+					<lightning-button-icon
+						class="create-folder-button"
+						icon-name="action:new"
+						variant="border-filled"
+						alternative-text={label.createFolder}
+						title={label.createFolder}
+						disabled={isCreatingFolder}
+						onclick={handleCreateFolder}
+					></lightning-button-icon>
+					<template lwc:if={isCreatingFolder}>
+						<lightning-spinner alternative-text={label.createFolder} variant="brand" size="small"></lightning-spinner>
+					</template>
+				</div>
+			</template>
+		</div>
+	</lightning-card>
+</template>

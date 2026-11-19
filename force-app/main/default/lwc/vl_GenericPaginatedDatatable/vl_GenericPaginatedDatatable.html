@@ -1,0 +1,261 @@
+<template>
+	<div class="table-container slds-is-relative">
+		<template if:true={isLoading}>
+			<div class="loading-overlay"><lightning-spinner alternative-text="Loading" variant="brand" size="large"></lightning-spinner></div>
+		</template>
+		<template if:true={showHeaderRow}>
+			<div class={resultsHeaderClass}>
+				<template if:true={showResultsHeader}>
+					<div class="results-heading">
+						<template if:true={showHeaderIcon}>
+							<lightning-icon icon-name={headerIconName} alternative-text="" size="small"></lightning-icon>
+						</template>
+						<h2 class="results-title">{displayHeaderTitle}</h2>
+						<span class="results-count">({filteredData.length})</span>
+					</div>
+				</template>
+				<template if:true={showToolbar}>
+					<div class={toolbarClass}>
+						<div class={toolbarActionsClass}>
+							<template if:true={hasSourceData}>
+								<lightning-input
+									class={searchInputClass}
+									type="search"
+									label="Search"
+									variant="label-hidden"
+									placeholder={searchPlaceHolderLabel}
+									value={searchTerm}
+									onchange={handleSearch}
+									disabled={isLoading}
+								></lightning-input>
+							</template>
+							<template if:true={showNewButton}>
+								<template if:false={isCompactToolbar}>
+									<lightning-button
+										icon-name="utility:add"
+										label={newRecordLabel}
+										variant="brand"
+										onclick={handleNewRecord}
+									></lightning-button>
+								</template>
+								<template if:true={isCompactToolbar}>
+									<lightning-button-icon
+										icon-name="utility:add"
+										alternative-text={newRecordLabel}
+										title={newRecordLabel}
+										variant="brand"
+										onclick={handleNewRecord}
+									></lightning-button-icon>
+								</template>
+							</template>
+							<template if:true={shouldShowExportButton}>
+								<template if:false={isCompactToolbar}>
+									<lightning-button
+										icon-name="utility:download"
+										label={exportLabel}
+										variant="neutral"
+										onclick={handleExport}
+										disabled={isExportDisabled}
+									></lightning-button>
+								</template>
+								<template if:true={isCompactToolbar}>
+									<lightning-button-icon
+										icon-name="utility:download"
+										alternative-text={exportLabel}
+										title={exportLabel}
+										variant="border-filled"
+										onclick={handleExport}
+										disabled={isExportDisabled}
+									></lightning-button-icon>
+								</template>
+							</template>
+							<template if:true={showColumnConfiguration}>
+								<template if:false={isCompactToolbar}>
+									<lightning-button
+										icon-name="utility:settings"
+										label={configureColumns}
+										variant="neutral"
+										onclick={toggleColumnPanel}
+									></lightning-button>
+								</template>
+								<template if:true={isCompactToolbar}>
+									<lightning-button-icon
+										icon-name="utility:settings"
+										alternative-text={configureColumns}
+										title={configureColumns}
+										variant="border-filled"
+										onclick={toggleColumnPanel}
+									></lightning-button-icon>
+								</template>
+							</template>
+						</div>
+					</div>
+				</template>
+			</div>
+		</template>
+		<template if:true={hasSourceData}>
+			<template if:true={hasData}>
+				<template if:true={isColumnPanelOpen}>
+					<section
+						role="dialog"
+						tabindex="-1"
+						aria-modal="true"
+						aria-label={configureColumns}
+						class="column-config-modal slds-modal slds-fade-in-open"
+					>
+						<div class="slds-modal__container">
+							<header class="slds-modal__header">
+								<lightning-button-icon
+									class="column-config-close"
+									icon-name="utility:close"
+									alternative-text={closeLabel}
+									title={closeLabel}
+									onclick={handleCancelColumns}
+								></lightning-button-icon>
+								<h2 class="slds-modal__title slds-hyphenate">{configureColumns}</h2>
+							</header>
+							<div class="slds-modal__content slds-p-around_medium">
+								<lightning-dual-listbox
+									source-label={availables}
+									selected-label={selectedLabel}
+									options={columnListboxOptions}
+									value={draftSelectedValues}
+									onchange={handleColumnListboxChange}
+								></lightning-dual-listbox>
+							</div>
+							<footer class="slds-modal__footer">
+								<lightning-button label={resetLabel} variant="neutral" onclick={handleResetColumns}></lightning-button>
+								<lightning-button
+									class="slds-m-left_x-small"
+									label={cancelLabel}
+									variant="neutral"
+									onclick={handleCancelColumns}
+								></lightning-button>
+								<lightning-button
+									class="slds-m-left_x-small"
+									label={saveLabel}
+									variant="brand"
+									onclick={handleSaveColumns}
+									disabled={isSaveColumnsDisabled}
+								></lightning-button>
+							</footer>
+						</div>
+					</section>
+					<div class="slds-backdrop slds-backdrop_open"></div>
+				</template>
+				<c-vl_-generic-datatable
+					key-field="id"
+					data={pagedData}
+					columns={renderedColumns}
+					default-sort-direction={defaultSortDirection}
+					sorted-direction={sortDirection}
+					sorted-by={sortedBy}
+					onsort={handleSort}
+					onrowaction={handleRowAction}
+					hide-checkbox-column
+					wrap-text-max-lines="3"
+				></c-vl_-generic-datatable>
+				<div class="pagination slds-align_absolute-center">
+					<template if:true={showPagination}>
+						<div class="pagination-controls">
+							<lightning-button-icon
+								icon-name="utility:jump_to_left"
+								alternative-text={firstPageLabel}
+								title={firstPageLabel}
+								onclick={handleFirstPage}
+								disabled={isFirstPage}
+							></lightning-button-icon>
+							<lightning-button-icon
+								icon-name="utility:chevronleft"
+								alternative-text={previousPageLabel}
+								title={previousPageLabel}
+								onclick={handlePreviousPage}
+								disabled={isFirstPage}
+							></lightning-button-icon>
+							<template for:each={pageList} for:item="item">
+								<template if:true={item.isEllipsis}>
+									<span key={item.key} class={item.className}>{item.label}</span>
+								</template>
+								<template if:false={item.isEllipsis}>
+									<span
+										key={item.key}
+										class={item.className}
+										data-page={item.page}
+										onclick={handlePageChange}
+										role="button"
+										tabindex="0"
+										onkeydown={handleKeyDownPagination}
+										>{item.label}</span
+									>
+								</template>
+							</template>
+							<lightning-button-icon
+								icon-name="utility:chevronright"
+								alternative-text={nextPageLabel}
+								title={nextPageLabel}
+								onclick={handleNextPage}
+								disabled={isLastPage}
+							></lightning-button-icon>
+							<lightning-button-icon
+								icon-name="utility:jump_to_right"
+								alternative-text={lastPageLabel}
+								title={lastPageLabel}
+								onclick={handleLastPage}
+								disabled={isLastPage}
+							></lightning-button-icon>
+						</div>
+					</template>
+					<div class="pagination-size">
+						<div class="page-size-menu">
+							<button
+								class="page-size-button"
+								type="button"
+								aria-label="Filas por página"
+								aria-haspopup="listbox"
+								aria-expanded={isPageSizeMenuOpen}
+								onclick={togglePageSizeMenu}
+							>
+								{pageSizeValue}
+								<lightning-icon icon-name="utility:chevrondown" alternative-text="" size="xx-small"></lightning-icon>
+							</button>
+							<template if:true={isPageSizeMenuOpen}>
+								<div class="page-size-dropdown" role="listbox" aria-label="Filas por página">
+									<template for:each={pageSizeOptions} for:item="option">
+										<button
+											key={option.value}
+											class="page-size-option"
+											type="button"
+											role="option"
+											aria-selected={option.isSelected}
+											data-value={option.value}
+											onclick={handlePageSizeOptionClick}
+										>
+											{option.label}
+										</button>
+									</template>
+								</div>
+							</template>
+						</div>
+						<span class="pagination-info">{paginationSummary}</span>
+					</div>
+				</div>
+			</template>
+			<template if:false={hasData}>
+				<div class="empty-state">{noDataLabel}</div>
+			</template>
+		</template>
+		<template if:false={hasSourceData}>
+			<template if:true={isLoadingListViews}>
+				<div class="empty-state">{emptyStateLoadingLabel}</div>
+			</template>
+			<template if:false={isLoadingListViews}>
+				<template if:true={hasSelectedListView}>
+					<div class="empty-state">{emptyStateDataLabel}</div>
+				</template>
+				<template if:false={hasSelectedListView}>
+					<div class="empty-state">{emptyStateSelectionLabel}</div>
+				</template>
+			</template>
+		</template>
+	</div>
+</template>

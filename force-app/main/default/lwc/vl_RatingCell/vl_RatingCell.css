@@ -1,0 +1,40 @@
+.rating-cell {
+	align-items: center;
+	display: inline-flex;
+	gap: 0.375rem;
+}
+
+.rating-dots {
+	display: inline-flex;
+	gap: 0.125rem;
+}
+
+.rating-dot {
+	color: #dddbda;
+	flex-shrink: 0;
+	font-size: 1.25rem;
+	line-height: 1;
+	width: 1.125rem;
+}
+
+.rating-dot::before {
+	content: '★';
+}
+
+.rating-dot_full {
+	color: #f59e0b;
+}
+
+.rating-dot_half::before {
+	color: transparent;
+	background: linear-gradient(90deg, #f59e0b 50%, #dddbda 50%);
+	background-clip: text;
+	content: '★';
+	-webkit-background-clip: text;
+}
+
+.rating-value {
+	color: #5c5c5c;
+	font-size: 0.875rem;
+	font-weight: 700;
+}

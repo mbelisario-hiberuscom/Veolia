@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>65.0</apiVersion>
+    <isExposed>true</isExposed>
+    <masterLabel>Custom Donut Chart</masterLabel>
+	<description>Generic donut chart for grouped record data.</description>
+    <targets>
+        <target>lightning__RecordPage</target>
+    </targets>
+    <targetConfigs>
+        <targetConfig targets="lightning__RecordPage">
+            <property name="title" type="String" label="Chart title" description="Title displayed above the chart." />
+            <property
+				name="controllerClass"
+				type="String"
+				label="Controller class"
+				description="Apex class implementing VL_CustomChartInterface."
+				required="true"
+			/>
+            <property
+				name="filter"
+				type="String"
+				label="Filter override"
+				description="Optional filter value. The current record Id is used when this is empty."
+			/>
+            <property name="legendTitle" type="String" label="Legend title" description="Optional title displayed above the legend." />
+            <property
+				name="legendPosition"
+				type="String"
+				label="Legend position"
+				description="Position of the legend relative to the chart: bottom, right, or top."
+				datasource="bottom,right,top"
+				default="bottom"
+			/>
+            <property
+				name="legendMaxTextWidth"
+				type="Integer"
+				label="Legend text width"
+				description="Maximum width of each legend label in pixels."
+				default="150"
+			/>
+			<property
+				name="showValuesButton"
+				type="Boolean"
+				label="Show values button"
+				description="Display the button that toggles values on the chart."
+				default="true"
+			/>
+			<property
+				name="showExpandButton"
+				type="Boolean"
+				label="Show expand button"
+				description="Display the button that opens the chart in a modal."
+				default="true"
+			/>
+        </targetConfig>
+    </targetConfigs>
+</LightningComponentBundle>

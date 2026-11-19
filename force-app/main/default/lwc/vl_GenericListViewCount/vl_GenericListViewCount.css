@@ -1,0 +1,15 @@
+.count {
+	background: #eef1f6;
+	border-radius: 1rem;
+	color: #1a1a1a;
+	font-size: 0.75rem;
+	font-weight: 700;
+	min-width: 1.5rem;
+	padding: 0.1rem 0.35rem;
+	text-align: center;
+}
+
+.count.selected {
+	background: rgba(255, 255, 255, 0.25);
+	color: #ffffff;
+}

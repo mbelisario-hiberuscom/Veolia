@@ -1,0 +1,31 @@
+<template>
+	<div class="chart-grid">
+		<div class="chart-column">
+			<c-vl_-custom-donut-chart
+				record-id={recordId}
+				title="Oportunidades por estado (todas)"
+				controller-class="VL_OpportunityStatusChartController"
+				filter=""
+				legend-title="Estado"
+				legend-position="bottom"
+				legend-max-text-width="150"
+				show-values-button="false"
+				show-expand-button="false"
+			></c-vl_-custom-donut-chart>
+		</div>
+		<div class="chart-column">
+			<c-vl_-custom-bar-chart
+				record-id={recordId}
+				title="Oportunidades por línea de negocio"
+				controller-class="VL_OpportunityBusinessLineController"
+				filter=""
+				orientation="horizontal"
+				legend-title="Estado"
+				legend-position="bottom"
+				legend-max-text-width="150"
+				show-values-button="false"
+				show-expand-button="false"
+			></c-vl_-custom-bar-chart>
+		</div>
+	</div>
+</template>

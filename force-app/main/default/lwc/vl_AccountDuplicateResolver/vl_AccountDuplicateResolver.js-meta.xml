@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>65.0</apiVersion>
+    <isExposed>true</isExposed>
+    <masterLabel>Account Duplicate Resolver</masterLabel>
+    <description>Searches potential Account duplicates by fiscal number or name.</description>
+    <targets>
+        <target>lightning__RecordPage</target>
+        <target>lightning__FlowScreen</target>
+    </targets>
+    <targetConfigs>
+        <targetConfig targets="lightning__RecordPage">
+            <property name="recordId" type="String" label="Account Id" />
+        </targetConfig>
+        <targetConfig targets="lightning__FlowScreen">
+            <property name="recordId" type="String" label="Account Id" />
+            <property name="initialName" type="String" label="Initial Account name" />
+            <property name="initialFiscalNumber" type="String" label="Initial fiscal number" />
+        </targetConfig>
+    </targetConfigs>
+</LightningComponentBundle>

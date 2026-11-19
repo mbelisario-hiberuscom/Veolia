@@ -1,0 +1,156 @@
+<template>
+	<section class="compact-header">
+		<div class="header-top">
+			<div class="identity">
+				<div class="icon-box">
+					<lightning-icon icon-name="standard:account" size="medium"></lightning-icon>
+				</div>
+				<div class="account-header-content">
+					<span class="object-label">Account</span>
+					<div class="account-title-row">
+						<!-- Nome -->
+						<h1>{accountName}</h1>
+						<div class="badges">
+							<!-- Active -->
+							<span class={isActiveClass}>
+								<span class="badge-label">Cliente:</span>
+								<span class="badge-value">{isActive}</span>
+							</span>
+							<!-- Rating -->
+							<template if:true={starRating}>
+								<span class="header-badge nps-pill">
+									<span class="badge-label">NPS:</span>
+									<span class="badge-value">{starRating}/5</span>
+									<span class="stars">
+										<template for:each={npsStars} for:item="star">
+											<lightning-icon
+												key={star.key}
+												icon-name="utility:favorite"
+												size="xx-small"
+												class={star.className}
+											></lightning-icon>
+										</template>
+									</span>
+								</span>
+							</template>
+							<!-- Prioridad -->
+							<template if:true={customerPriority}>
+								<span class={customerPriorityClass}>
+									<span class="badge-label">Prioridad:</span>
+									<span class="badge-value">{customerPriority}</span>
+								</span>
+							</template>
+							<!-- Riesgo Financiero -->
+							<template if:true={financialScoring}>
+								<span class={financialRiskBadgeClass}>
+									<lightning-icon
+										icon-name="utility:shield"
+										size="xx-small"
+										class="financial-risk-icon"
+										alternative-text="Riesgo financiero"
+									></lightning-icon>
+									<span class="badge-label">Riesgo Financiero:</span>
+									<span class="badge-value">{financialRiskLabel}</span>
+								</span>
+							</template>
+						</div>
+					</div>
+					<!-- CIF / Owner / Business Group -->
+					<div class="account-meta">
+						<div class="account-meta-item">
+							<lightning-icon icon-name="utility:user" size="xx-small"></lightning-icon>
+							<span class="meta-label">Owner</span>
+							<strong>{ownerName}</strong>
+						</div>
+						<template if:true={documentNumber}>
+							<div class="account-meta-item">
+								<lightning-icon icon-name="utility:world" size="xx-small"></lightning-icon>
+								<span class="meta-label">CIF</span>
+								<strong>{documentNumber}</strong>
+							</div>
+						</template>
+						<template if:true={businessGroup}>
+							<div class="account-meta-item">
+								<lightning-icon icon-name="utility:groups" size="xx-small"></lightning-icon>
+								<span class="meta-label">Business Group</span>
+								<strong>{businessGroup}</strong>
+							</div>
+						</template>
+						<template if:true={type}>
+							<div class="account-meta-item">
+								<lightning-icon icon-name="utility:company" size="xx-small"></lightning-icon>
+								<span class="meta-label">Type</span>
+								<strong>{type}</strong>
+							</div>
+						</template>
+						<template if:true={marketSegment}>
+							<div class="account-meta-item">
+								<lightning-icon icon-name="utility:promotion_segments" size="xx-small"></lightning-icon>
+								<span class="meta-label">Market/Segment</span>
+								<strong>{marketSegment}</strong>
+							</div>
+						</template>
+						<template if:true={phone}>
+							<div class="account-meta-item">
+								<lightning-icon icon-name="utility:call" size="xx-small"></lightning-icon>
+								<span class="meta-label">Phone</span>
+								<strong>{phone}</strong>
+							</div>
+						</template>
+					</div>
+				</div>
+			</div>
+			<div class="actions">
+				<lightning-button label="Follow" icon-name="utility:add" variant="neutral"></lightning-button>
+				<lightning-button label="Editar" variant="neutral" onclick={handleEdit}></lightning-button>
+				<lightning-button label="Nuevo caso" variant="neutral" onclick={handleNewCase}></lightning-button>
+				<lightning-button label="Nueva oportunidad" variant="neutral" onclick={handleNewOpportunity}></lightning-button>
+			</div>
+		</div>
+		<div class="kpi-columns">
+			<template for:each={items} for:item="item">
+				<div key={item.label} class="info-item">
+					<template if:true={item.icon}>
+						<div class={item.iconClass}>
+							<lightning-icon icon-name={item.icon} size="small" variant="inverse"></lightning-icon>
+						</div>
+					</template>
+					<div class="info-content">
+						<span>{item.label}</span>
+						<strong>{item.value}</strong>
+					</div>
+				</div>
+			</template>
+		</div>
+	</section>
+	<template lwc:if={isEditRecordFlowOpen}>
+		<section
+			role="dialog"
+			tabindex="-1"
+			aria-modal="true"
+			aria-label={activeEditRecordFlowName}
+			class="edit-record-flow-modal slds-modal slds-fade-in-open"
+		>
+			<div class="slds-modal__container">
+				<header class="slds-modal__header">
+					<lightning-button-icon
+						class="edit-record-flow-close"
+						icon-name="utility:close"
+						alternative-text="Cerrar"
+						title="Cerrar"
+						onclick={closeEditRecordFlow}
+					></lightning-button-icon>
+					<h2 class="slds-modal__title slds-hyphenate">{editRecordLabel}</h2>
+				</header>
+				<div class="slds-modal__content slds-p-around_medium">
+					<lightning-flow
+						flow-api-name={activeEditRecordFlowName}
+						flow-input-variables={editRecordFlowInputVariables}
+						onstatuschange={handleEditRecordFlowStatusChange}
+					></lightning-flow>
+				</div>
+			</div>
+		</section>
+		<div class="slds-backdrop slds-backdrop_open"></div>
+	</template>
+</template>

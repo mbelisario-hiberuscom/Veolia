@@ -1,0 +1,146 @@
+<template>
+	<article>
+		<template if:true={isLoading}>
+			<div>
+				<lightning-spinner alternative-text="Loading" variant="brand" size="large"></lightning-spinner>
+			</div>
+		</template>
+		<template if:true={isInit}>
+			<div class="slds-m-bottom_large" if:false={hideTimezonePicklist}>
+				<lightning-combobox
+					name="timezones"
+					label="Choose Timezone"
+					value={timezone}
+					placeholder="Choose Timezone"
+					options={timezoneObjList}
+					onchange={handleTimezoneChange}
+					data-name="timezonePicklist"
+					class="timezonePicklist"
+				>
+				</lightning-combobox>
+			</div>
+		</template>
+
+		<template if:true={hasLegend}>
+			<div class="slds-m-around_small legend-container">
+				<template for:each={businessAreaLegendItems} for:item="item">
+					<div
+						key={item.type}
+						class="legend-item legend-item--clickable"
+						data-type={item.type}
+						onclick={handleBusinessAreaLegendClick}
+					>
+						<span class="legend-color" style={item.colorStyle}></span>
+						<span class={item.labelClass}>{item.type}</span>
+					</div>
+				</template>
+			</div>
+
+			<!-- <p class="legend-title slds-m-horizontal--small">{workOrderStatusLabel}</p> -->
+			<div class="slds-m-around_small legend-container">
+				<template for:each={statusLegendItems} for:item="item">
+					<div key={item.type} class="legend-item">
+						<span class={item.cssClass}></span>
+						<span>{item.type}</span>
+					</div>
+				</template>
+			</div>
+
+			<div class="divider-calendar"></div>
+		</template>
+
+		<div data-id="calendar" lwc:dom="manual" class="slds-m-around--small calendar-container"></div>
+
+		<template if:true={eventDetailsModalOpen}>
+			<div class="modalContainer">
+				<section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" class="slds-modal slds-fade-in-open">
+					<div class="slds-modal__container cccalendar_slds-modal__container">
+						<c-fwccal_event-details
+							controller-class={controllerClass}
+							event={selectedEvent}
+							is-modal="true"
+							onclosedetailsmodalevent={closeEventDetailsModal}
+							hide-event-detail-button={hideEventDetailButton}
+							event-detail-button-text={eventDetailButtonText}
+							buttons-on-bottom={buttonsOnBottom}
+							truncate={truncate}
+							truncate-each-line={truncateEachLine}
+							truncate-number-of-lines-to-display={truncateNumberOfLinesToDisplay}
+						>
+						</c-fwccal_event-details>
+					</div>
+				</section>
+				<div class="slds-backdrop slds-backdrop_open"></div>
+			</div>
+		</template>
+
+		<template if:true={groupedEventsModalOpen}>
+			<div class="modalContainer">
+				<section role="dialog" tabindex="-1" aria-modal="true" class="slds-modal slds-fade-in-open">
+					<div class="slds-modal__container">
+						<header class="slds-modal__header">
+							<lightning-button-icon
+								class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse"
+								icon-name="utility:close"
+								variant="bare"
+								size="large"
+								alternative-text="Close"
+								title="Close"
+								onclick={closeGroupModal}
+							></lightning-button-icon>
+							<h2 class="slds-text-heading_medium slds-hyphenate">{selectedGroupTitle}</h2>
+						</header>
+						<div class="slds-modal__content slds-p-around_medium">
+							<lightning-datatable
+								key-field="id"
+								data={selectedGroupEvents}
+								columns={dtColumns}
+								onrowaction={handleRowAction}
+								hide-checkbox-column
+								column-widths-mode="auto"
+							></lightning-datatable>
+						</div>
+					</div>
+				</section>
+				<div class="slds-backdrop slds-backdrop_open"></div>
+			</div>
+		</template>
+
+		<template if:true={dayEventsModalOpen}>
+			<div class="modalContainer">
+				<section role="dialog" tabindex="-1" aria-modal="true" class="slds-modal slds-fade-in-open">
+					<div class="slds-modal__container">
+						<header class="slds-modal__header">
+							<lightning-button-icon
+								class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse"
+								icon-name="utility:close"
+								variant="bare"
+								size="large"
+								alternative-text="Close"
+								title="Close"
+								onclick={closeDayModal}
+							></lightning-button-icon>
+							<h2 class="slds-text-heading_medium slds-hyphenate">{selectedDayTitle}</h2>
+						</header>
+						<div class="slds-modal__content slds-p-around_medium">
+							<template for:each={selectedDayGroups} for:item="group">
+								<div key={group.type} class="slds-m-bottom_medium">
+									<h3 class="slds-text-heading_small slds-m-bottom_x-small title-type">{group.type}</h3>
+									<lightning-datatable
+										key-field="id"
+										data={group.events}
+										columns={dtColumns}
+										onrowaction={handleRowAction}
+										hide-checkbox-column
+										column-widths-mode="auto"
+									></lightning-datatable>
+								</div>
+							</template>
+						</div>
+					</div>
+				</section>
+				<div class="slds-backdrop slds-backdrop_open"></div>
+			</div>
+		</template>
+	</article>
+</template>

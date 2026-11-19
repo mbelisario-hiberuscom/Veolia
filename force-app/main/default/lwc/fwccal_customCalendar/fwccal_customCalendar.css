@@ -1,0 +1,318 @@
+:host {
+	--cccalendar-colorBackgroundButtonBrand: var(--lwc-colorBackgroundButtonBrand, #2574a9);
+	--cccalendar-buttonColorBorderBrand: var(--lwc-colorBorderBrand, #2574a9);
+	--cccalendar-colorBackgroundButtonBrandActive: var(--lwc-colorBackgroundButtonBrandActive, #135f90);
+	--cccalendar-colorBorderBrandPrimaryActive: var(--lwc-colorBorderBrand, rgb(0, 57, 107));
+	--cccalendar-colorTextButtonBrandDisabled: var(--lwc-colorTextButtonBrandDisabled, rgb(255, 255, 255));
+	--cccalendar-colorTextButtonBrand: var(--lwc-colorTextButtonBrand, #ffffff);
+	--cccalendar-colorBackgroundButtonBrandDisabled: rgba(44, 62, 80, 0.65);
+	--cccalendar-buttonColorBorderBrandDisabled: rgba(44, 62, 80, 0.65);
+	--cccalendar-header-background-color: #e6f2eb;
+	--cccalendar-event-text-color: #000000;
+}
+
+/*
+ * FullCalendar v7 con el tema "classic" ofusca los nombres de clase internos
+ * (fc-classic-XXX), por lo que los selectores clásicos (.fc-button, .fc-event,
+ * .fc-title, .fc-time, .fc-toolbar, .fc-day-header...) ya no existen en el DOM.
+ * Para estilar el calendario usamos las clases estables que añadimos vía los
+ * hooks de settings (buttonClass, dayHeaderClass, eventClass, eventTitleClass,
+ * eventTimeClass, eventInnerClass). Estas clases se prefijan con "cx-cal-".
+ */
+
+/* Botones del toolbar (prev / next / today) */
+.cx-cal-prev-button,
+.cx-cal-next-button,
+.cx-cal-today-button {
+	background-color: var(--cccalendar-colorBackgroundButtonBrand, #2574a9);
+	border-color: var(--cccalendar-buttonColorBorderBrand, #2574a9);
+	color: var(--cccalendar-colorTextButtonBrand, #ffffff);
+	text-transform: capitalize;
+	padding: 5px !important;
+}
+
+.cx-cal-prev-button:not(:disabled):active,
+.cx-cal-next-button:not(:disabled):active,
+.cx-cal-today-button:not(:disabled):active,
+.cx-cal-prev-button:hover,
+.cx-cal-next-button:hover,
+.cx-cal-today-button:hover {
+	background-color: var(--cccalendar-colorBackgroundButtonBrandActive, #135f90);
+	border-color: var(--cccalendar-colorBorderBrandPrimaryActive, rgb(0, 57, 107));
+	color: var(--cccalendar-colorTextButtonBrand, #ffffff);
+}
+
+.cx-cal-prev-button:disabled,
+.cx-cal-next-button:disabled,
+.cx-cal-today-button:disabled {
+	color: var(--cccalendar-colorTextButtonBrandDisabled, #ffffff);
+	background-color: var(--cccalendar-colorBackgroundButtonBrandDisabled, rgba(44, 62, 80, 0.65));
+	border-color: var(--cccalendar-buttonColorBorderBrandDisabled, rgba(44, 62, 80, 0.65));
+}
+
+/* Botones de cambio de vista del toolbar (mes / semana / día / lista) */
+.cx-cal-view-button {
+	background-color: var(--cccalendar-colorBackgroundButtonBrand, #2574a9);
+	border-color: var(--cccalendar-buttonColorBorderBrand, #2574a9);
+	color: var(--cccalendar-colorTextButtonBrand, #ffffff);
+	text-transform: capitalize;
+	padding: 5px !important;
+}
+
+.cx-cal-view-button:hover,
+.cx-cal-view-button:active {
+	background-color: var(--cccalendar-colorBackgroundButtonBrandActive, #135f90);
+	border-color: var(--cccalendar-colorBorderBrandPrimaryActive, rgb(0, 57, 107));
+	color: var(--cccalendar-colorTextButtonBrand, #ffffff);
+}
+
+/* Botón de vista activo (seleccionado).
+   FullCalendar v7 con tema classic aplica sus propios estilos al botón activo
+   vía clases ofuscadas (fc-classic-XXX) con la misma especificidad que este
+   selector pero cargadas después, ganando la cascada. No podemos apuntar a las
+   clases ofuscadas de forma estable, así que usamos !important (igual que con
+   .cx-cal-event-hidden) para garantizar que el estado activo se vea más oscuro.
+   Además, v7 renderiza los botones de vista como tabs con aria-selected (NO
+   aria-pressed), por lo que cubrimos ambos atributos por si la configuración
+   del toolbar cambia (botones mezclados con no-vista). */
+[data-id='calendar'] button[aria-pressed='true'],
+[data-id='calendar'] button[aria-selected='true'],
+.cx-cal-view-button[aria-pressed='true'],
+.cx-cal-view-button[aria-selected='true'] {
+	background-color: var(--cccalendar-colorBackgroundButtonBrandActive, #135f90) !important;
+	border-color: var(--cccalendar-colorBorderBrandPrimaryActive, rgb(0, 57, 107)) !important;
+	color: var(--cccalendar-colorTextButtonBrand, #ffffff) !important;
+}
+
+/* Título del toolbar (centro).
+   El texto del título se renderiza en un div hijo (no en el .cx-cal-toolbar-center
+   directamente) con clases del tema classic ofuscadas que aplican font-weight:
+   bold. Añadimos la clase estable .cx-cal-toolbar-title vía el hook
+   toolbarTitleClass y sobreescribimos el peso con !important.
+   No usamos width:100% ni text-align:center aquí porque rompería el layout
+   flex del toolbar (start/center/end). El centrado del texto se logra con
+   justify-content: center dentro de la sección central. */
+.cx-cal-toolbar-center {
+	text-transform: uppercase;
+	justify-content: center;
+	font-size: 1.5em !important;
+}
+
+.cx-cal-toolbar-title {
+	font-weight: 400 !important;
+}
+
+/* Cabeceras de día */
+.cx-cal-day-header {
+	background-color: var(--cccalendar-header-background-color);
+}
+
+/* Vista de lista (listWeek): cabecera de cada día donde se agrupan los eventos.
+   FullCalendar renderiza un contenedor por día (.cx-cal-list-day) con data-date,
+   y dentro una cabecera (.cx-cal-list-day-header) con la fecha. Usamos el color
+   #e8f5e9 como fondo de la cabecera del día. */
+.cx-cal-list-day-header {
+	background-color: #e8f5e9;
+}
+
+/* Eventos: tipografía y color de texto por defecto */
+.cx-cal-event {
+	font-size: 0.85rem;
+	color: var(--cccalendar-event-text-color);
+	cursor: pointer;
+}
+
+/* Eventos en bloque (vista de mes/día): borde verde.
+   FullCalendar v7 expone el hook blockEventClass que solo aplica a los eventos
+   que se renderizan como bloques (vista de mes), no a los de la vista de lista. */
+.cx-cal-event-block {
+	border: 1px solid #006227;
+}
+
+.cx-cal-event-main,
+.cx-cal-event-title,
+.cx-cal-event-time {
+	color: var(--cccalendar-event-text-color);
+}
+
+/* El título del evento no debe saltar de línea y debe truncar con elipsis */
+.cx-cal-event-title {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	display: block;
+}
+
+/* Evento oculto por la leyenda: usamos !important porque FullCalendar v7
+   puede re-aplicar estilos inline durante el render y sobreescribir
+   un simple style.display='none'. */
+.cx-cal-event-hidden {
+	display: none !important;
+}
+
+.cccalendar_slds-modal__container {
+	width: 75%;
+	max-width: 75rem;
+	margin: auto;
+}
+
+.slds-spinner_container {
+	z-index: 4 !important;
+}
+
+.calendar-container {
+	min-height: 200px;
+}
+
+/* Contenedor raíz del calendario (tema classic ofuscado fc-classic-yth).
+   FullCalendar aplica un gap de 20px entre el toolbar y la vista; lo
+   reducimos a 5px para que la cabecera y el calendario queden más juntos. */
+.fc-classic-yth {
+	gap: 5px !important;
+}
+
+/* Elemento del tema classic fc-classic-kMV: limitamos su ancho máximo. */
+.fc-classic-kMV {
+	max-width: 100px !important;
+}
+
+/* Clase del tema classic fc-classic-DIS (presente en el título del toolbar). */
+.fc-classic-DIS {
+	font-weight: 400 !important;
+}
+
+.legend-title {
+	text-align: start;
+	margin: 4px 12;
+	font-size: 13px;
+	color: #707070;
+	min-height: 17px;
+}
+
+.legend-container {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+}
+
+.legend-item {
+	display: inline-flex;
+	align-items: center;
+	gap: 3px;
+	white-space: nowrap;
+	text-transform: uppercase;
+}
+
+.legend-item--clickable {
+	cursor: pointer;
+	user-select: none;
+}
+
+.legend-text {
+	transition: opacity 0.2s ease;
+}
+
+.legend-text--hidden {
+	text-decoration: line-through;
+	opacity: 0.45;
+}
+
+.legend-color {
+	width: 12px;
+	height: 12px;
+	border-radius: 3px;
+	display: inline-block;
+}
+
+.legend-item .fc-has-icon::before {
+	margin-right: -1px;
+}
+
+.title-type {
+	font-weight: 700;
+}
+
+.fc-has-icon::before {
+	content: '';
+	display: inline-block;
+	width: 14px;
+	height: 14px;
+	margin-right: 4px;
+	background-size: contain;
+	background-repeat: no-repeat;
+	vertical-align: middle;
+}
+
+.utility-hourglass::before {
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' height='52' width='52' viewBox='0 0 520 520' fill='%23000'%3E%3Cpath d='M89 20c-9 0-16 7-16 16v24c0 10 7 16 17 16h20v60c0 8 3 16 8 21l74 85c3 3 4 6 4 10v26c0 12-53 63-76 85a32 32 0 0 0-10 23v58H89c-9 0-16 7-16 16v25c0 8 7 15 16 15h341c9 0 16-7 16-15v-25c0-9-7-16-16-16h-20v-58a30 30 0 0 0-10-24 384 384 0 0 1-77-84v-26c0-3 1-7 4-10l75-85a31 31 0 0 0 8-20V76h22c9 0 16-7 16-16V36c-1-9-8-16-18-16H90Zm75 94a14 14 0 0 0-10 23l69 79c8 10 13 23 13 36v26a50 50 0 0 1-7 26l-10 13a1215 1215 0 0 1-66 68 12 12 0 0 0 9 21h197a12 12 0 0 0 8-20 1118 1118 0 0 1-66-69l-10-13a52 52 0 0 1-8-26v-26c0-13 5-26 14-36l70-78a14 14 0 0 0-10-24H163Z'/%3E%3C/svg%3E");
+}
+
+.utility-clock::before {
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' height='52' width='52' viewBox='0 0 520 520' fill='%23000'%3E%3Cpath d='M260 20C128 20 20 128 20 260s108 240 240 240 240-108 240-240S392 20 260 20zm0 420c-99 0-180-81-180-180S161 80 260 80s180 81 180 180-81 180-180 180zm34-178c-3-3-4-7-4-11v-96c0-8-7-15-15-15h-30c-8 0-15 7-15 15v121c0 4 2 8 4 11l74 74c6 6 15 6 21 0l21-21c6-6 6-15 0-21z'/%3E%3C/svg%3E");
+}
+
+.utility-success::before {
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' height='52' width='52' viewBox='0 0 520 520' fill='%23000'%3E%3Cpath d='M260 20a240 240 0 1 0 0 480 240 240 0 1 0 0-480zm134 180L241 355c-6 6-16 6-22 0l-84-85c-6-6-6-16 0-22l22-22c6-6 16-6 22 0l44 45a10 10 0 0 0 15 0l112-116c6-6 16-6 22 0l22 22c7 6 7 16 0 23z'/%3E%3C/svg%3E");
+}
+
+.utility-close::before {
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' height='52' width='52' viewBox='0 0 520 520' fill='%23000'%3E%3Cpath d='m310 254 130-131c6-6 6-15 0-21l-20-21c-6-6-15-6-21 0L268 212a10 10 0 0 1-14 0L123 80c-6-6-15-6-21 0l-21 21c-6 6-6 15 0 21l131 131c4 4 4 10 0 14L80 399c-6 6-6 15 0 21l21 21c6 6 15 6 21 0l131-131a10 10 0 0 1 14 0l131 131c6 6 15 6 21 0l21-21c6-6 6-15 0-21L310 268a10 10 0 0 1 0-14z'/%3E%3C/svg%3E");
+}
+
+.utility-forward::before {
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' height='52' width='52' viewBox='0 0 520 520' fill='%23000'%3E%3Cpath d='M34 290h332c9 0 13 11 7 17l-96 96c-6 6-6 15 0 21l22 22c6 6 15 6 21 0l175-176c6-6 6-15 0-21L320 74c-6-6-15 6-21 0l-21 21c-6 6-6 15 0 21l96 96c6 7 2 18-7 18H35c-8 0-15 6-15 14v30c0 8 6 16 14 16z'/%3E%3C/svg%3E");
+}
+
+.utility-arrowRight::before {
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' height='52' width='52' viewBox='0 0 520 520' fill='%23000'%3E%3Cpath d='M418 97a20 20 0 0 1 20-20h42a20 20 0 0 1 20 20v326a20 20 0 0 1-20 20h-41a20 20 0 0 1-20-20ZM20 240a21 21 0 0 1 20-20h174a13 13 0 0 0 10-22l-49-48a20 20 0 0 1 0-29l28-29a19 19 0 0 1 27 0l150 154a20 20 0 0 1 0 29L230 428a19 19 0 0 1-27 0l-27-28a20 20 0 0 1 0-29l47-48a13 13 0 0 0-9-22H40a22 22 0 0 1-20-21Z'/%3E%3C/svg%3E");
+}
+
+.utility-event::before {
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' height='52' width='52' viewBox='0 0 52 52' fill='%23000'%3E%3Cpath d='M46.5 20h-41c-.8 0-1.5.7-1.5 1.5V46a4 4 0 0 0 4 4h36a4 4 0 0 0 4-4V21.5c0-.8-.7-1.5-1.5-1.5zM19 42c0 .6-.4 1-1 1h-4c-.6 0-1-.4-1-1v-4c0-.6.4-1 1-1h4c.6 0 1 .4 1 1zm0-10c0 .6-.4 1-1 1h-4c-.6 0-1-.4-1-1v-4c0-.6.4-1 1-1h4c.6 0 1 .4 1 1zm10 10c0 .6-.4 1-1 1h-4c-.6 0-1-.4-1-1v-4c0-.6.4-1 1-1h4c.6 0 1 .4 1 1zm0-10c0 .6-.4 1-1 1h-4c-.6 0-1-.4-1-1v-4c0-.6.4-1 1-1h4c.6 0 1 .4 1 1zm10 10c0 .6-.4 1-1 1h-4c-.6 0-1-.4-1-1v-4c0-.6.4-1 1-1h4c.6 0 1 .4 1 1zm0-10c0 .6-.4 1-1 1h-4c-.6 0-1-.4-1-1v-4c0-.6.4-1 1-1h4c.6 0 1 .4 1 1zm5-25h-5V5a3 3 0 0 0-3-3 3 3 0 0 0-3 3v2H19V5a3 3 0 0 0-3-3 3 3 0 0 0-3 3v2H8a4 4 0 0 0-4 4v2.5c0 .8.7 1.5 1.5 1.5h41c.8 0 1.5-.7 1.5-1.5V11a4 4 0 0 0-4-4z'/%3E%3C/svg%3E");
+}
+
+.divider-calendar {
+	border-top: 1px solid #e0e0e0;
+	margin: 10px 0;
+}
+
+@media (max-width: 355px) {
+	/* Cambia el layout del toolbar a columna */
+	.cx-cal-toolbar-section {
+		flex-direction: column !important;
+	}
+}
+
+@media (max-width: 385px) {
+	/* Cambia el layout del toolbar a columna (locale polaco) */
+	.cx-cal-toolbar-section:lang(pl) {
+		flex-direction: column !important;
+	}
+}
+
+@media (max-width: 650px) {
+	/* Reorganiza el toolbar en móvil: título arriba, botones centrados abajo */
+	.cx-cal-toolbar-section {
+		display: flex;
+		flex-direction: inherit;
+		align-items: center;
+		gap: 3px;
+		flex-wrap: wrap;
+	}
+
+	.cx-cal-toolbar-center {
+		order: 1;
+		text-align: center;
+		width: 100%;
+	}
+
+	.cx-cal-toolbar-start,
+	.cx-cal-toolbar-end {
+		order: 2;
+		display: flex;
+		justify-content: center;
+		width: auto;
+		margin: 0 5px;
+		flex-wrap: nowrap;
+	}
+}
